@@ -1,11 +1,11 @@
-#include "../include/Manager.h"
+#include "../include/Manager.hpp"
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 bool Manager::create(const std::string &name, const std::string &path,
-                     const std::vector<std::string> &args)
+                     const std::vector<std::string> &args={})
 {
   if (m_processes.find(name) != m_processes.end())
   {
@@ -25,9 +25,14 @@ bool Manager::create(const std::string &name, const std::string &path,
 bool Manager::stop(const std::string &name)
 {
   auto it = m_processes.find(name);
+  
   if (it == m_processes.end())
   {
     std::cerr << "Process : " << name << " not found\n";
+    return false;
+  }
+  if(it->second->getStatus() != Process::State::Running)
+  {
     return false;
   }
   it->second->terminate();
@@ -50,7 +55,6 @@ bool Manager::sendInput(const std::string &name, const std::string &data)
 
 std::optional<std::string> Manager::getOutput(const std::string &name)
 {
-
   auto it = m_processes.find(name);
   if (it == m_processes.end())
   {

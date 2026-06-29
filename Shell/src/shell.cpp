@@ -106,6 +106,11 @@ void Shell::output(const std::string &name)
   {
     std::cout << result.value() << "\n";
   }
+  else
+  {
+    std::cerr<<"" << name << ": failed to get output\n";
+  }
+  
 }
 
 void Shell::execute(const std::string &input)

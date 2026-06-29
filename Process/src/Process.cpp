@@ -1,4 +1,4 @@
-#include "../include/Process.h"
+#include "../include/Process.hpp"
 #include <cerrno>
 #include <csignal>
 #include <cstdlib>
@@ -6,6 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <fcntl.h>
 #include <random>
 #include <signal.h>
 #include <string>
@@ -161,10 +162,13 @@ void Process::sendInput(std::string &data)
     std::cerr << "No Pipe\n";
     return;
   }
-
+  std::string withNewline = data + "\n";
   ssize_t wr = ::write(m_writefd, data.data(), data.size());
   if (wr < 0)
+  {
     std::cerr << "Error Reading File\n";
+    return;
+  }
 }
 
 void Process::closeInput()
@@ -176,24 +180,29 @@ void Process::closeInput()
   }
 }
 
-std::optional<std::string> Process::getOutput()
-{
-  if (m_readfd == -1)
-  {
-    std::cerr << "No Pipe\n";
-    return std::nullopt;
-  }
+std::optional<std::string> Process::getOutput() {
+    if (m_readfd == -1) {
+        return std::nullopt;
+    }
 
-  std::string data;
-  char buffer[4096];
-  ssize_t bytes;
+    // Set pipe to non-blocking
+    int flags = fcntl(m_readfd, F_GETFL, 0);
+    fcntl(m_readfd, F_SETFL, flags | O_NONBLOCK);
 
-  while ((bytes = ::read(m_readfd, buffer, sizeof(buffer))) > 0)
-  {
-    data.append(buffer, bytes);
-  }
+    std::string data;
+    char buffer[4096];
+    ssize_t bytes;
 
-  return data.empty() ? std::nullopt : std::optional<std::string>{data};
+    // Read until no more data available (non-blocking)
+    while ((bytes = ::read(m_readfd, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[bytes] = '\0';
+        data += buffer;
+    }
+
+    // Restore blocking mode
+    fcntl(m_readfd, F_SETFL, flags);
+
+    return data.empty() ? std::nullopt : std::optional<std::string>(data);
 }
 
 pid_t Process::getPid() const

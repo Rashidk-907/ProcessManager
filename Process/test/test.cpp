@@ -1,4 +1,4 @@
-#include "../include/Process.h"
+#include "../include/Process.hpp"
 #include <iostream>
 
 using namespace std;
