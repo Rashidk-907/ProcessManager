@@ -166,7 +166,7 @@ void Process::sendInput(std::string &data)
   ssize_t wr = ::write(m_writefd, data.data(), data.size());
   if (wr < 0)
   {
-    std::cerr << "Error Reading File\n";
+    std::cerr << "Error Reading File \n";
     return;
   }
 }
