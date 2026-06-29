@@ -11,9 +11,9 @@ A simple command-line tool to manage external processes in C++.
 - Built with C++17, uses Linux system calls (fork, execvp, pipe)
 
 ## How it works
-Each process runs in a child spawned via fork(). Two pipes connect
-parent to child — one for stdin, one for stdout. The shell loop
-maps process names to ProcessResource objects stored in a map.
+Each process runs in a child spawned via fork(). 
+Two pipes connect parent to child — one for stdin, one for stdout. 
+The shell loop maps process names to ProcessResource objects stored in a map.
 
 ## Requirements
 
