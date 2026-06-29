@@ -12,7 +12,7 @@ void printSeparator(const std::string& title) {
 void printProcessList(Manager& mgr) {
     auto names = mgr.listAll();
     if (names.empty()) {
-        std::cout << "  (No processes running)\n";
+        std::cout << " (No processes running)\n";
         return;
     }
     
