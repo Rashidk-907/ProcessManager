@@ -1,4 +1,4 @@
-#include "../include/Process.hpp"
+#include "../include/process.hpp"
 #include <cerrno>
 #include <csignal>
 #include <cstdlib>
